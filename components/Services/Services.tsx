@@ -174,7 +174,7 @@ export default function Services() {
   };
 
   return (
-    <section id="services" className="w-full bg-[#050505] py-28 md:py-36 px-6 md:px-12 relative z-20 overflow-hidden">
+    <section id="services" className="w-full bg-[#050505] py-10 md:py-14 px-6 md:px-12 relative z-20 overflow-hidden">
       
       {/* Ambient Background Glows matching ECOSYSTEM */}
       <div className="absolute top-1/4 left-1/4 w-[600px] h-[500px] bg-accent/10 blur-[160px] rounded-full pointer-events-none" />
@@ -192,45 +192,45 @@ export default function Services() {
 
       <div className="max-w-7xl mx-auto relative z-10">
         
-        {/* Section Header matching ECOSYSTEM style */}
-        <div className="flex flex-col items-center text-center mb-16 md:mb-20">
+        {/* Section Header matching ECOSYSTEM style - Compacted for Single Page View */}
+        <div className="flex flex-col items-center text-center mb-6 md:mb-8">
           <motion.div 
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent/10 border border-accent/30 text-accent text-xs font-semibold uppercase tracking-widest mb-6"
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 border border-accent/30 text-accent text-xs font-semibold uppercase tracking-widest mb-2"
           >
             <Sparkles className="w-3.5 h-3.5" /> Capabilities & Solutions
           </motion.div>
 
           <motion.h2 
-            initial={{ opacity: 0, y: 25 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-            className="text-4xl md:text-5xl lg:text-7xl font-bold tracking-tight text-white mb-6"
+            transition={{ duration: 0.6 }}
+            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white mb-2"
           >
             Everything you need to <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent via-purple-300 to-cyan-400">build, launch and scale.</span>
           </motion.h2>
 
           <motion.p 
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.1 }}
-            className="text-base md:text-xl text-white/60 font-medium max-w-3xl leading-relaxed"
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="text-xs sm:text-sm text-white/60 font-medium max-w-2xl leading-relaxed"
           >
-            From custom high-performance web platforms and mobile apps to automated ERP workflows and cloud infrastructure, we deliver end-to-end technology solutions.
+            From custom high-performance web platforms and mobile apps to automated ERP workflows and cloud infrastructure.
           </motion.p>
         </div>
 
-        {/* Services Cyber Cards Grid */}
+        {/* Services Cyber Cards Grid - 6 Cards fitting simultaneously in viewport */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 items-start"
+          viewport={{ once: true, margin: "-50px" }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4"
         >
           {services.map((service) => {
             const isExpanded = hoveredId === service.id || activeId === service.id;
@@ -242,24 +242,24 @@ export default function Services() {
                 onMouseEnter={() => setHoveredId(service.id)}
                 onMouseLeave={() => setHoveredId(null)}
                 onClick={() => handleCardClick(service.id)}
-                className={`group relative rounded-3xl p-6 sm:p-8 transition-all duration-300 backdrop-blur-xl border shadow-xl overflow-hidden cursor-pointer flex flex-col justify-between ${
+                className={`group relative rounded-2xl p-4 sm:p-4.5 transition-all duration-300 backdrop-blur-xl border shadow-lg overflow-hidden cursor-pointer flex flex-col justify-between min-h-[195px] sm:min-h-[205px] ${
                   isExpanded
-                    ? "bg-[#0d0d1a]/95 border-accent shadow-[0_0_40px_rgba(139,92,246,0.25)]"
+                    ? "bg-[#0d0d1a]/95 border-accent shadow-[0_0_30px_rgba(139,92,246,0.25)]"
                     : "bg-[#090b14]/90 border-white/10 hover:border-white/25 hover:bg-[#0d0e1a]/90"
                 }`}
               >
                 {/* Radial Card Ambient Glow */}
                 <div 
-                  className="absolute top-0 right-0 w-44 h-44 rounded-full blur-[70px] opacity-15 pointer-events-none transition-opacity duration-500 group-hover:opacity-40"
+                  className="absolute top-0 right-0 w-36 h-36 rounded-full blur-[60px] opacity-15 pointer-events-none transition-opacity duration-500 group-hover:opacity-40"
                   style={{ backgroundColor: service.color }}
                 />
 
-                <div>
+                <div className="flex-1 flex flex-col">
                   {/* Top Card Header: Icon, Badge & Expand Indicator */}
-                  <div className="flex items-center justify-between mb-5">
-                    <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2.5">
                       <div 
-                        className="w-10 h-10 rounded-xl flex items-center justify-center border shadow-lg shrink-0 transition-transform duration-300 group-hover:scale-105"
+                        className="w-8 h-8 rounded-lg flex items-center justify-center border shadow-md shrink-0 transition-transform duration-300 group-hover:scale-105"
                         style={{ 
                           backgroundColor: `rgba(${service.accentRgb}, 0.15)`, 
                           borderColor: `rgba(${service.accentRgb}, 0.35)` 
@@ -269,7 +269,7 @@ export default function Services() {
                       </div>
 
                       <span 
-                        className="text-[10px] px-2.5 py-1 rounded-full font-mono font-bold tracking-wider uppercase"
+                        className="text-[9px] px-2 py-0.5 rounded-full font-mono font-bold tracking-wider uppercase"
                         style={{ 
                           backgroundColor: `rgba(${service.accentRgb}, 0.1)`, 
                           color: service.color,
@@ -285,27 +285,35 @@ export default function Services() {
                         {service.id}
                       </span>
                       <div 
-                        className={`w-7 h-7 rounded-full flex items-center justify-center border transition-all duration-300 ${
+                        className={`w-6 h-6 rounded-full flex items-center justify-center border transition-all duration-300 ${
                           isExpanded
                             ? "bg-accent text-white border-accent rotate-180 shadow-[0_0_10px_rgba(139,92,246,0.5)]"
                             : "bg-white/5 text-white/40 border-white/10 group-hover:text-white group-hover:border-white/20"
                         }`}
                       >
-                        <ChevronDown className="w-3.5 h-3.5" />
+                        <ChevronDown className="w-3 h-3" />
                       </div>
                     </div>
                   </div>
 
-                  {/* Title & Subtitle */}
-                  <div className="text-[10px] font-semibold tracking-widest text-accent uppercase font-mono mb-1">
+                  {/* Category */}
+                  <div className="text-[9px] font-semibold tracking-widest text-accent uppercase font-mono mb-1">
                     {service.category}
                   </div>
-                  <h3 className="text-2xl lg:text-3xl font-bold text-white tracking-tight group-hover:text-accent transition-colors">
-                    {service.title}
-                  </h3>
-                  <p className="text-sm text-white/60 font-medium mt-1">
-                    {service.subtitle}
-                  </p>
+
+                  {/* Title: Standardized height so all cards align across rows */}
+                  <div className="min-h-[2.25rem] flex items-center">
+                    <h3 className="text-base sm:text-lg lg:text-xl font-bold text-white tracking-tight group-hover:text-accent transition-colors leading-snug">
+                      {service.title}
+                    </h3>
+                  </div>
+
+                  {/* Subtitle: Standardized height */}
+                  <div className="min-h-[1.25rem] flex items-center mb-1">
+                    <p className="text-xs text-white/50 font-medium line-clamp-1">
+                      {service.subtitle}
+                    </p>
+                  </div>
 
                   {/* Expandable Deliverables Section */}
                   <AnimatePresence initial={false}>
@@ -316,34 +324,34 @@ export default function Services() {
                           opacity: 1, 
                           height: "auto",
                           transition: { 
-                            height: { duration: 0.35, ease: [0.16, 1, 0.3, 1] },
-                            opacity: { duration: 0.25, delay: 0.08 }
+                            height: { duration: 0.3, ease: [0.16, 1, 0.3, 1] },
+                            opacity: { duration: 0.2, delay: 0.05 }
                           } 
                         }}
                         exit={{ 
                           opacity: 0, 
                           height: 0,
                           transition: { 
-                            height: { duration: 0.25, ease: [0.16, 1, 0.3, 1] },
-                            opacity: { duration: 0.15 }
+                            height: { duration: 0.2, ease: [0.16, 1, 0.3, 1] },
+                            opacity: { duration: 0.12 }
                           } 
                         }}
                         className="overflow-hidden"
                       >
-                        <div className="pt-5 mt-5 border-t border-white/10">
-                          <p className="text-xs text-white/60 leading-relaxed mb-4">
+                        <div className="pt-3 mt-2 border-t border-white/10">
+                          <p className="text-xs text-white/60 leading-relaxed mb-3">
                             {service.description}
                           </p>
 
                           {/* Deliverables Badges matching Ecosystem style */}
-                          <div className="flex flex-wrap gap-1.5 mb-2">
+                          <div className="flex flex-wrap gap-1.5 mb-1">
                             {service.items.map((item, i) => (
                               <motion.span
                                 key={item}
                                 initial={{ opacity: 0, scale: 0.95 }}
                                 animate={{ opacity: 1, scale: 1 }}
-                                transition={{ delay: 0.04 + i * 0.03 }}
-                                className="px-2.5 py-1 bg-white/5 border border-white/10 rounded-lg text-white/80 font-mono text-[11px] hover:bg-white/10 hover:border-white/20 transition-colors"
+                                transition={{ delay: 0.03 + i * 0.02 }}
+                                className="px-2 py-0.5 bg-white/5 border border-white/10 rounded-md text-white/80 font-mono text-[10px] hover:bg-white/10 hover:border-white/20 transition-colors"
                               >
                                 {item}
                               </motion.span>
@@ -356,9 +364,9 @@ export default function Services() {
                 </div>
 
                 {/* Card Footer Metric & Action matching ECOSYSTEM */}
-                <div className="pt-5 mt-5 border-t border-white/10 flex items-center justify-between text-xs text-white/50">
-                  <span className="flex items-center gap-1.5 font-mono text-emerald-400">
-                    <Activity className="w-3.5 h-3.5" /> {service.metric}
+                <div className="pt-2.5 mt-2.5 border-t border-white/10 flex items-center justify-between text-xs text-white/50 shrink-0">
+                  <span className="flex items-center gap-1.5 font-mono text-emerald-400 text-[10px] sm:text-[11px]">
+                    <Activity className="w-3 h-3" /> {service.metric}
                   </span>
 
                   <button
@@ -367,9 +375,9 @@ export default function Services() {
                       e.stopPropagation();
                       openContactModal(service.title);
                     }}
-                    className="flex items-center gap-1 text-accent hover:text-white font-semibold transition-colors cursor-pointer"
+                    className="flex items-center gap-1 text-accent hover:text-white font-semibold transition-colors cursor-pointer text-[11px]"
                   >
-                    Build with {service.title} <ArrowUpRight className="w-3.5 h-3.5" />
+                    Build <ArrowUpRight className="w-3 h-3" />
                   </button>
                 </div>
               </motion.div>
@@ -377,22 +385,22 @@ export default function Services() {
           })}
         </motion.div>
 
-        {/* Bottom Consultation Banner matching ECOSYSTEM */}
+        {/* Bottom Consultation Banner - Compacted */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="mt-14 p-6 sm:p-8 rounded-3xl bg-white/[0.02] border border-white/10 flex flex-col md:flex-row items-center justify-between gap-6"
+          className="mt-5 p-3.5 sm:p-4 rounded-2xl bg-white/[0.02] border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3"
         >
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-accent/10 border border-accent/30 flex items-center justify-center text-accent shrink-0">
-              <Zap className="w-6 h-6 animate-pulse" />
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-accent/10 border border-accent/30 flex items-center justify-center text-accent shrink-0">
+              <Zap className="w-4 h-4 animate-pulse" />
             </div>
             <div>
-              <h4 className="text-base sm:text-lg font-bold text-white">
+              <h4 className="text-xs sm:text-sm font-bold text-white">
                 Have a specialized project or enterprise requirement?
               </h4>
-              <p className="text-xs sm:text-sm text-white/60 mt-0.5">
+              <p className="text-[11px] text-white/50 mt-0.5">
                 We provide custom engineering sprints, cross-discipline teams, and dedicated technical leadership.
               </p>
             </div>
@@ -401,10 +409,10 @@ export default function Services() {
           <button
             type="button"
             onClick={() => openContactModal("Custom Service Consultation")}
-            className="w-full sm:w-auto px-6 py-3 rounded-full bg-white hover:bg-accent text-black hover:text-white font-bold text-xs tracking-wider uppercase transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.15)] shrink-0 cursor-pointer flex items-center justify-center gap-2"
+            className="w-full sm:w-auto px-4 py-2 rounded-full bg-white hover:bg-accent text-black hover:text-white font-bold text-[11px] tracking-wider uppercase transition-all duration-300 shadow-[0_0_15px_rgba(255,255,255,0.12)] shrink-0 cursor-pointer flex items-center justify-center gap-1.5"
           >
             <span>Start a Project</span>
-            <ArrowUpRight className="w-4 h-4" />
+            <ArrowUpRight className="w-3.5 h-3.5" />
           </button>
         </motion.div>
 

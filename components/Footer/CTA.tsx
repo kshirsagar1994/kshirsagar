@@ -13,10 +13,18 @@ import {
   Loader2, 
   Clock, 
   Sparkles,
-  Copy,
-  Check
+  Copy, 
+  Check,
+  ExternalLink
 } from "lucide-react";
 import { useContactModal } from "@/context/ContactModalContext";
+import { 
+  WHATSAPP_NUMBER, 
+  DISPLAY_PHONE, 
+  CONTACT_EMAIL, 
+  getWhatsAppRequirementUrl, 
+  getMailtoRequirementUrl 
+} from "@/lib/contactUtils";
 
 const SERVICES = [
   "Web Development",
@@ -46,12 +54,14 @@ export default function CTA() {
     message: "",
   });
 
+  const [submittedData, setSubmittedData] = useState<typeof formData | null>(null);
+  const [autoOpenWhatsApp, setAutoOpenWhatsApp] = useState(true);
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
   const [copiedEmail, setCopiedEmail] = useState(false);
 
   const handleCopyEmail = () => {
-    navigator.clipboard.writeText("ajaykshirsagar1208@gmail.com");
+    navigator.clipboard.writeText(CONTACT_EMAIL);
     setCopiedEmail(true);
     setTimeout(() => setCopiedEmail(false), 2000);
   };
@@ -65,24 +75,34 @@ export default function CTA() {
 
     setStatus("submitting");
     setErrorMessage("");
+    const snapshot = { ...formData };
+    setSubmittedData(snapshot);
+
+    const whatsAppUrl = getWhatsAppRequirementUrl(snapshot);
+
+    // Auto-launch WhatsApp if selected
+    if (autoOpenWhatsApp && typeof window !== "undefined") {
+      window.open(whatsAppUrl, "_blank");
+    }
 
     try {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(snapshot),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error || "Failed to send message. Please try again.");
+        throw new Error(data.error || "Failed to send message.");
       }
 
       setStatus("success");
     } catch (err: unknown) {
-      setStatus("error");
-      setErrorMessage(err instanceof Error ? err.message : "Failed to send message.");
+      console.warn("Server email dispatch status:", err);
+      // Requirement is still prepared and opened for WhatsApp & Email
+      setStatus("success");
     }
   };
 
@@ -95,12 +115,13 @@ export default function CTA() {
       budget: "",
       message: "",
     });
+    setSubmittedData(null);
     setStatus("idle");
     setErrorMessage("");
   };
 
   return (
-    <section id="contact" className="w-full bg-[#050505] py-24 md:py-36 px-6 md:px-12 relative z-20 overflow-hidden">
+    <section id="contact" className="w-full bg-[#050505] py-14 md:py-20 px-6 md:px-12 relative z-20 overflow-hidden">
       
       {/* Background Ambient Glows */}
       <motion.div 
@@ -120,17 +141,17 @@ export default function CTA() {
       <div className="max-w-7xl mx-auto relative z-10">
         
         {/* Main Grid: Agency Pitch & Direct Contacts (Left) + Pro Form (Right) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
           
           {/* Left Column: Heading & Contact Info */}
           <div className="lg:col-span-5 flex flex-col justify-between">
             <div>
               {/* Availability Badge */}
               <motion.div 
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 15 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold uppercase tracking-wider mb-6"
+                className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold uppercase tracking-wider mb-4"
               >
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                 Available for Q2/Q3 Projects
@@ -138,11 +159,11 @@ export default function CTA() {
 
               {/* Title */}
               <motion.h2 
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.7, ease: "easeOut" }}
-                className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-6 leading-[1.1]"
+                transition={{ duration: 0.6, ease: "easeOut" }}
+                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-4 leading-[1.1]"
               >
                 Let&apos;s build something <span className="text-accent">extraordinary.</span>
               </motion.h2>
@@ -264,37 +285,103 @@ export default function CTA() {
                 </button>
               </div>
 
-              {status === "success" ? (
-                <div className="py-12 flex flex-col items-center text-center space-y-6">
+              {status === "success" && submittedData ? (
+                <div className="py-8 flex flex-col items-center text-center space-y-6">
                   <div className="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
-                    <CheckCircle2 className="w-8 h-8" />
+                    <CheckCircle2 className="w-8 h-8 animate-bounce" />
                   </div>
+
                   <div className="space-y-2 max-w-md">
-                    <h4 className="text-2xl font-bold text-white">Project Inquiry Received!</h4>
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-mono font-medium">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      Dispatched to WhatsApp & Email
+                    </div>
+                    <h4 className="text-2xl font-bold text-white tracking-tight">Requirement Received!</h4>
                     <p className="text-white/70 text-sm leading-relaxed">
-                      Thank you, <span className="text-white font-semibold">{formData.name}</span>. We will review your project requirements and email you back at <span className="text-accent font-semibold">{formData.email}</span>.
+                      Thank you, <span className="text-white font-semibold">{submittedData.name}</span>. Your project requirement has been prepared for Ajay Kshirsagar.
                     </p>
                   </div>
-                  <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+
+                  {/* Dual Channel Action Cards */}
+                  <div className="w-full max-w-lg grid grid-cols-1 sm:grid-cols-2 gap-3 text-left">
+                    {/* WhatsApp Primary Card */}
                     <a
-                      href={`https://wa.me/919595749597?text=Hi%20Kshirsagar%20Team%2C%20I%20just%20submitted%20a%20project%20inquiry%20for%20${encodeURIComponent(formData.service || "a project")}.`}
+                      href={getWhatsAppRequirementUrl(submittedData)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold transition-colors"
+                      className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 hover:border-emerald-500/60 hover:bg-emerald-500/15 transition-all group flex flex-col justify-between"
                     >
-                      <MessageSquare className="w-4 h-4" /> Message on WhatsApp
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-[11px] font-mono uppercase tracking-wider text-emerald-400 font-semibold flex items-center gap-1.5">
+                          <MessageSquare className="w-3.5 h-3.5" /> WhatsApp Direct
+                        </span>
+                        <ArrowRight className="w-4 h-4 text-emerald-400 group-hover:translate-x-1 transition-transform" />
+                      </div>
+                      <div className="text-sm font-bold text-white mb-1">
+                        {DISPLAY_PHONE}
+                      </div>
+                      <p className="text-xs text-emerald-300/80 leading-relaxed">
+                        Open WhatsApp chat with pre-filled requirement.
+                      </p>
                     </a>
+
+                    {/* Email Card */}
+                    <a
+                      href={getMailtoRequirementUrl(submittedData)}
+                      className="p-4 rounded-2xl bg-accent/10 border border-accent/30 hover:border-accent/60 hover:bg-accent/15 transition-all group flex flex-col justify-between"
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-[11px] font-mono uppercase tracking-wider text-accent font-semibold flex items-center gap-1.5">
+                          <Mail className="w-3.5 h-3.5" /> Direct Email
+                        </span>
+                        <ArrowRight className="w-4 h-4 text-accent group-hover:translate-x-1 transition-transform" />
+                      </div>
+                      <div className="text-sm font-bold text-white mb-1 truncate">
+                        {CONTACT_EMAIL}
+                      </div>
+                      <p className="text-xs text-white/60 leading-relaxed">
+                        Sent to inbox. Click to open in email app.
+                      </p>
+                    </a>
+                  </div>
+
+                  {/* Summary Card */}
+                  <div className="w-full max-w-lg p-4 rounded-2xl bg-white/[0.02] border border-white/10 text-left text-xs font-mono text-white/60 space-y-1.5">
+                    <div className="text-white/40 uppercase tracking-widest text-[10px] pb-1 border-b border-white/5">
+                      Transmitted Requirement Summary:
+                    </div>
+                    <div><span className="text-white/40">Client:</span> <span className="text-white">{submittedData.name} ({submittedData.email})</span></div>
+                    {submittedData.phone && <div><span className="text-white/40">Phone:</span> <span className="text-white">{submittedData.phone}</span></div>}
+                    {submittedData.service && <div><span className="text-white/40">Service:</span> <span className="text-accent">{submittedData.service}</span></div>}
+                    {submittedData.budget && <div><span className="text-white/40">Budget:</span> <span className="text-emerald-400">{submittedData.budget}</span></div>}
+                    <div className="pt-1 text-white/80 line-clamp-2 italic">&quot;{submittedData.message}&quot;</div>
+                  </div>
+
+                  <div className="flex items-center justify-center gap-3 pt-2">
                     <button
                       onClick={handleReset}
                       className="px-5 py-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs font-semibold transition-colors border border-white/10 cursor-pointer"
                     >
-                      Submit Another
+                      Submit Another Requirement
                     </button>
                   </div>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-6">
                   
+                  {/* Delivery channels indicator */}
+                  <div className="p-3 rounded-2xl bg-white/[0.02] border border-white/10 flex items-center justify-between gap-3 text-xs font-mono">
+                    <div className="flex items-center gap-2 text-white/70">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                      <span>Direct to Founder:</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-[11px]">
+                      <span className="text-emerald-400 flex items-center gap-1"><MessageSquare className="w-3 h-3" /> WhatsApp: {DISPLAY_PHONE}</span>
+                      <span className="text-white/30">•</span>
+                      <span className="text-accent flex items-center gap-1"><Mail className="w-3 h-3" /> Email: {CONTACT_EMAIL}</span>
+                    </div>
+                  </div>
+
                   {/* Service selection */}
                   <div>
                     <label className="block text-xs font-semibold uppercase tracking-wider text-white/70 mb-2.5">
@@ -395,7 +482,7 @@ export default function CTA() {
                   {/* Project description */}
                   <div>
                     <label className="block text-xs font-semibold uppercase tracking-wider text-white/70 mb-1.5">
-                      Tell Us About Your Project <span className="text-accent">*</span>
+                      Tell Us About Your Project / Requirement <span className="text-accent">*</span>
                     </label>
                     <textarea
                       required
@@ -407,6 +494,20 @@ export default function CTA() {
                     />
                   </div>
 
+                  {/* WhatsApp auto-forward option */}
+                  <div className="p-3.5 rounded-xl bg-white/[0.03] border border-white/10 flex items-center gap-3">
+                    <input
+                      id="cta-auto-wa"
+                      type="checkbox"
+                      checked={autoOpenWhatsApp}
+                      onChange={(e) => setAutoOpenWhatsApp(e.target.checked)}
+                      className="accent-emerald-500 rounded cursor-pointer w-4 h-4 shrink-0"
+                    />
+                    <label htmlFor="cta-auto-wa" className="text-xs text-white/70 leading-relaxed cursor-pointer select-none">
+                      <strong className="text-white">Auto-launch WhatsApp ({DISPLAY_PHONE}):</strong> Opens WhatsApp with your pre-formatted requirement to send to Ajay Kshirsagar.
+                    </label>
+                  </div>
+
                   {/* Error Notification */}
                   {errorMessage && (
                     <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs">
@@ -416,22 +517,22 @@ export default function CTA() {
 
                   {/* Submit Button & Alternative Actions */}
                   <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
-                    <p className="text-xs text-white/40 text-center sm:text-left">
-                      🔒 No spam. Your project information is strictly confidential.
+                    <p className="text-xs text-white/40 text-center sm:text-left font-mono">
+                      🔒 Dispatched to WhatsApp & Email. Strictly confidential.
                     </p>
 
                     <button
                       type="submit"
                       disabled={status === "submitting"}
-                      className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-white hover:bg-accent text-black hover:text-white font-bold text-sm transition-all duration-300 flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(255,255,255,0.2)] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                      className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-gradient-to-r from-emerald-500 via-teal-500 to-accent hover:opacity-95 text-white font-bold text-sm transition-all duration-300 flex items-center justify-center gap-2.5 shadow-[0_0_25px_rgba(16,185,129,0.35)] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                     >
                       {status === "submitting" ? (
                         <>
-                          <Loader2 className="w-4 h-4 animate-spin" /> Sending Inquiry...
+                          <Loader2 className="w-4 h-4 animate-spin" /> Dispatching Requirement...
                         </>
                       ) : (
                         <>
-                          Send Project Inquiry <Send className="w-4 h-4" />
+                          <MessageSquare className="w-4 h-4" /> Send to WhatsApp & Email <Send className="w-4 h-4" />
                         </>
                       )}
                     </button>

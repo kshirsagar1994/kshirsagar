@@ -125,7 +125,7 @@ export default function Technology() {
   const selectedCategory = techCategories.find((c) => c.id === activeNode);
 
   return (
-    <section id="technologies" className="w-full bg-[#050505] py-28 md:py-36 px-6 md:px-12 relative overflow-hidden z-20">
+    <section id="technologies" className="w-full bg-[#050505] py-14 md:py-18 px-6 md:px-12 relative overflow-hidden z-20">
       
       {/* Background Animated Ambient Lights */}
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] md:w-[900px] h-[500px] bg-accent/10 blur-[160px] rounded-full pointer-events-none" />
@@ -144,12 +144,12 @@ export default function Technology() {
       <div className="max-w-7xl mx-auto relative z-10">
         
         {/* Section Header */}
-        <div className="flex flex-col items-center text-center mb-16 md:mb-20">
+        <div className="flex flex-col items-center text-center mb-8 md:mb-10">
           <motion.div 
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent/10 border border-accent/30 text-accent text-xs font-semibold uppercase tracking-widest mb-6"
+            className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-accent/10 border border-accent/30 text-accent text-xs font-semibold uppercase tracking-widest mb-3"
           >
             <Sparkles className="w-3.5 h-3.5" /> Full-Stack Ecosystem
           </motion.div>

@@ -105,10 +105,47 @@ export async function POST(request: Request) {
       console.log("--------------------------------------------------");
     }
 
+    // Optional CallMeBot WhatsApp automated alert if configured in env
+    const callmebotApiKey = process.env.CALLMEBOT_API_KEY;
+    const whatsappWebhookUrl = process.env.WHATSAPP_WEBHOOK_URL;
+
+    if (callmebotApiKey) {
+      try {
+        const waText = encodeURIComponent(`*New Kshirsagar Website Lead*\nName: ${name}\nEmail: ${email}\nPhone: ${phone || "N/A"}\nService: ${service || "General"}\nMessage: ${message}`);
+        await fetch(`https://api.callmebot.com/whatsapp.php?phone=919595749597&text=${waText}&apikey=${callmebotApiKey}`);
+        console.log("[Contact API] Server-side WhatsApp notification triggered via CallMeBot.");
+      } catch (waErr) {
+        console.warn("[Contact API] Could not trigger CallMeBot:", waErr);
+      }
+    } else if (whatsappWebhookUrl) {
+      try {
+        await fetch(whatsappWebhookUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            receiverPhone: "+919595749597",
+            receiverEmail,
+            name,
+            email,
+            phone,
+            service,
+            budget,
+            timeline,
+            message,
+          }),
+        });
+        console.log("[Contact API] Server-side WhatsApp webhook triggered.");
+      } catch (waErr) {
+        console.warn("[Contact API] Could not trigger WhatsApp webhook:", waErr);
+      }
+    }
+
     return NextResponse.json(
       {
         success: true,
-        message: "Thank you! Your project inquiry has been received. Our team will contact you within 24 hours.",
+        message: "Thank you! Your project requirement has been dispatched to Ajay Kshirsagar.",
+        receiverEmail: "ajaykshirsagar1208@gmail.com",
+        receiverPhone: "+91-9595749597",
       },
       { status: 200 }
     );

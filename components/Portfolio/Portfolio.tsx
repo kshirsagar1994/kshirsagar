@@ -17,17 +17,17 @@ const allProjects = [
     id: 1,
     title: "AIOD",
     category: "Apps",
-    description: "A comprehensive utility tool designed to download media files from various social media platforms seamlessly in one place.",
-    technologies: ["JavaScript", "Social Media API"],
+    description: "An all-in-one media downloader web application enabling users to download 4K videos, reels, stories, and 320kbps MP3 audio from Instagram, YouTube, TikTok, and Twitter without watermarks.",
+    technologies: ["React", "JavaScript", "Social Media APIs", "Media Processing"],
     repoUrl: "https://github.com/kshirsagar1994/AIOD",
     animationType: "download"
   },
   {
     id: 2,
-    title: "swamiratna",
+    title: "Swami Ratna Consultancy",
     category: "Website",
-    description: "A JavaScript-based web application tailored for specific business or community needs.",
-    technologies: ["JavaScript", "Frontend"],
+    description: "A specialized job placement and corporate HR consultancy platform connecting job seekers with leading employers across IT, banking, and industrial sectors.",
+    technologies: ["JavaScript", "Frontend", "Career Portal", "Job Search API"],
     repoUrl: "https://github.com/kshirsagar1994/swamiratna",
     animationType: "cards"
   },
@@ -44,8 +44,8 @@ const allProjects = [
     id: 4,
     title: "VVK Smart Tech",
     category: "Website",
-    description: "A modern business website showcasing smart technology solutions and services.",
-    technologies: ["Next.js", "React", "Tailwind CSS"],
+    description: "Official website for VVK Smart Tech, showcasing smart irrigation IoT solutions like IRRIGO Mobile Auto that help farmers remotely control motors and improve water management.",
+    technologies: ["Next.js", "React", "IoT & Telemetry", "AgTech Hardware"],
     repoUrl: "https://www.vvksmarttech.com",
     animationType: "wireframe"
   },
@@ -89,15 +89,15 @@ export default function Portfolio() {
   };
 
   return (
-    <section id="work" className="w-full bg-black py-32 px-6 md:px-12 relative z-20">
+    <section id="work" className="w-full bg-black py-14 md:py-18 px-6 md:px-12 relative z-20">
       <div className="max-w-7xl mx-auto">
         
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-8">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-6">
           <div>
-            <h2 className="text-4xl md:text-5xl lg:text-7xl font-bold tracking-tight text-white mb-6">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-3">
               Selected Work.
             </h2>
-            <p className="text-lg md:text-xl text-white/60 font-medium max-w-xl">
+            <p className="text-base md:text-lg text-white/60 font-medium max-w-xl">
               A showcase of our recent projects, demonstrating how we solve complex problems with modern technology.
             </p>
           </div>
