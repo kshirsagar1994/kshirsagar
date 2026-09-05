@@ -162,44 +162,43 @@ export default function Portfolio() {
                 } ${isExpanded ? "gap-6" : "gap-8 lg:gap-16"} items-center`}
               >
                 
-                {/* Image / Animation Container */}
+                {/* Product Screen Mockup Container */}
                 <motion.div 
                   layout
-                  className={`w-full ${!isExpanded ? "lg:w-2/3" : ""} aspect-[4/3] ${!isExpanded ? "lg:aspect-[16/9]" : ""} rounded-3xl overflow-hidden relative cursor-pointer border border-white/5 bg-[#050505]`}
+                  className={`w-full ${!isExpanded ? "lg:w-2/3" : ""} aspect-[4/3] ${!isExpanded ? "lg:aspect-[16/9]" : ""} rounded-3xl overflow-hidden relative border border-white/10 hover:border-accent/40 bg-[#07090e] shadow-2xl transition-all duration-500`}
                 >
-                  
-                  {/* Custom SVG Animation Component */}
-                  <div className="absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-105">
+                  {/* Actual Product Hero Screen Mockup */}
+                  <div className="absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-[1.01]">
                     {renderAnimation(project.animationType)}
-                  </div>
-                  
-                  {/* Tech Stack Overlay on Hover */}
-                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6 md:p-8 z-20">
-                    <div className="translate-y-4 group-hover:translate-y-0 transition-transform duration-500 ease-out flex flex-wrap gap-2">
-                      {project.technologies.map((tech, i) => (
-                        <span key={i} className="px-3 py-1.5 bg-white/10 backdrop-blur-md rounded-full text-white font-medium text-xs border border-white/20">
-                          {tech}
-                        </span>
-                      ))}
-                    </div>
                   </div>
                 </motion.div>
 
                 {/* Project Info */}
                 <motion.div layout className={`w-full ${!isExpanded ? "lg:w-1/3" : ""} flex flex-col`}>
-                  <motion.span layout className="text-accent font-bold tracking-widest uppercase text-xs mb-3">
+                  <motion.span layout className="text-accent font-bold tracking-widest uppercase text-xs mb-3 flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
                     0{project.id} — {project.category}
                   </motion.span>
                   <motion.h3 layout className={`${isExpanded ? "text-2xl" : "text-3xl md:text-4xl lg:text-5xl"} font-bold text-white tracking-tight mb-4 group-hover:text-accent transition-colors duration-300 cursor-pointer`}>
                     {project.title}
                   </motion.h3>
-                  <motion.p layout className={`text-white/60 mb-6 ${isExpanded ? "text-base" : "text-lg"}`}>
+                  <motion.p layout className={`text-white/60 mb-5 leading-relaxed ${isExpanded ? "text-base" : "text-lg"}`}>
                     {project.description}
                   </motion.p>
+
+                  {/* Technology Tags */}
+                  <div className="flex flex-wrap gap-2 mb-6">
+                    {project.technologies.map((tech, i) => (
+                      <span key={i} className="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-white/80 font-medium text-xs">
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+
                   <a href={project.repoUrl} target="_blank" rel="noopener noreferrer" className="self-start mt-auto">
-                    <motion.button layout className="flex items-center gap-2 text-white font-medium text-sm group/btn">
-                      Read Case Study
-                      <ArrowUpRight className="w-4 h-4 group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform" />
+                    <motion.button layout className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/5 hover:bg-white hover:text-black border border-white/10 text-white font-semibold text-sm transition-all duration-300 group/btn cursor-pointer">
+                      Explore Product
+                      <ArrowUpRight className="w-4 h-4 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
                     </motion.button>
                   </a>
                 </motion.div>
