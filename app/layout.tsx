@@ -3,6 +3,8 @@ import { Space_Grotesk, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar/Navbar";
 import SmoothScroll from "@/components/SmoothScroll";
+import { ContactModalProvider } from "@/context/ContactModalContext";
+import ContactModal from "@/components/Contact/ContactModal";
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
@@ -27,10 +29,13 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${spaceGrotesk.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
-        <SmoothScroll>
-          <Navbar />
-          {children}
-        </SmoothScroll>
+        <ContactModalProvider>
+          <SmoothScroll>
+            <Navbar />
+            {children}
+            <ContactModal />
+          </SmoothScroll>
+        </ContactModalProvider>
       </body>
     </html>
   );

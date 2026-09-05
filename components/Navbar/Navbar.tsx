@@ -5,12 +5,14 @@ import Link from "next/link";
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { Menu, X, ArrowUpRight } from "lucide-react";
 import { useLenis } from "lenis/react";
+import { useContactModal } from "@/context/ContactModalContext";
 
 export default function Navbar() {
   const { scrollY } = useScroll();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const lenis = useLenis();
+  const { openContactModal } = useContactModal();
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     if (href === "/") {
@@ -78,14 +80,14 @@ export default function Navbar() {
 
             {/* Contact CTA */}
             <div className="hidden md:block">
-              <Link
-                href="/#contact"
-                onClick={(e) => handleNavClick(e, "/#contact")}
-                className="group flex items-center gap-2 text-sm font-medium text-white hover:text-accent transition-colors"
+              <button
+                type="button"
+                onClick={() => openContactModal()}
+                className="group flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/5 hover:bg-white hover:text-black text-sm font-medium text-white transition-all duration-300 cursor-pointer"
               >
-                Contacts
+                <span>Contact</span>
                 <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-              </Link>
+              </button>
             </div>
 
             {/* Mobile Menu Toggle */}
@@ -142,13 +144,16 @@ export default function Navbar() {
             transition={{ duration: 0.4, delay: mobileMenuOpen ? 0.2 + navLinks.length * 0.1 : 0 }}
             className="pt-8 border-t border-white/10 mt-4"
           >
-            <Link
-              href="/#contact"
-              onClick={(e) => handleNavClick(e, "/#contact")}
-              className="text-2xl font-medium text-white hover:text-accent transition-colors flex items-center gap-2"
+            <button
+              type="button"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                openContactModal();
+              }}
+              className="text-2xl font-medium text-white hover:text-accent transition-colors flex items-center gap-2 cursor-pointer w-full text-left"
             >
-              Contacts <ArrowUpRight className="w-6 h-6" />
-            </Link>
+              Contact <ArrowUpRight className="w-6 h-6" />
+            </button>
           </motion.div>
         </div>
       </motion.div>

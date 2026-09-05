@@ -32,7 +32,6 @@ body {
 html {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
-  scroll-behavior: smooth;
 }
 
 /* Custom text selection color */

@@ -128,7 +128,7 @@ export default function Process() {
     <section 
       id="process"
       ref={containerRef}
-      className="w-full bg-[#050505] relative z-20 h-[700vh]"
+      className="w-full bg-[#050505] relative z-20 h-[380vh]"
     >
       <div className="sticky top-0 h-screen flex items-center overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 md:px-12 w-full flex flex-col md:flex-row gap-12 md:gap-24 h-full py-32">

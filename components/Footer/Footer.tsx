@@ -54,8 +54,16 @@ export default function Footer() {
           <div className="flex flex-col">
             <h4 className="text-white font-bold tracking-widest uppercase text-sm mb-6">Connect</h4>
             <ul className="flex flex-col gap-4 text-white/60">
-              <li>ajaykshirsagar1208@gmail.com</li>
-              <li>+91-9595749597</li>
+              <li>
+                <a href="mailto:ajaykshirsagar1208@gmail.com" className="hover:text-accent transition-colors">
+                  ajaykshirsagar1208@gmail.com
+                </a>
+              </li>
+              <li>
+                <a href="tel:+919595749597" className="hover:text-accent transition-colors">
+                  +91-9595749597
+                </a>
+              </li>
               <li>Solapur, MH, India</li>
             </ul>
           </div>

@@ -6,11 +6,13 @@ import { ArrowUpRight } from "lucide-react";
 import { useLenis } from "lenis/react";
 import Scene from "@/three/Scene";
 import { animateHeroText } from "@/animations/hero";
+import { useContactModal } from "@/context/ContactModalContext";
 
 export default function Hero() {
   const titleRef = useRef<HTMLHeadingElement>(null);
   const subtitleRef = useRef<HTMLParagraphElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
+  const { openContactModal } = useContactModal();
   
   const lenis = useLenis();
   const handleScroll = (e: React.MouseEvent<HTMLAnchorElement>, target: string) => {
@@ -68,17 +70,17 @@ export default function Hero() {
           ref={ctaRef}
           className="mt-12 flex flex-col sm:flex-row items-center gap-6 pointer-events-auto"
         >
-          <a
-            href="#contact"
-            onClick={(e) => handleScroll(e, '#contact')}
-            className="group relative flex items-center gap-2 bg-white text-black px-8 py-4 rounded-full font-bold text-lg overflow-hidden transition-transform hover:scale-105 active:scale-95"
+          <button
+            type="button"
+            onClick={() => openContactModal()}
+            className="group relative flex items-center gap-2 bg-white text-black px-8 py-4 rounded-full font-bold text-lg overflow-hidden transition-transform hover:scale-105 active:scale-95 cursor-pointer"
           >
             <span className="relative z-10 flex items-center gap-2">
               Start a Project <ArrowUpRight className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
             </span>
             {/* Hover effect background */}
             <div className="absolute inset-0 bg-accent translate-y-[100%] group-hover:translate-y-0 transition-transform duration-300 ease-in-out"></div>
-          </a>
+          </button>
           
           <a
             href="#work"
