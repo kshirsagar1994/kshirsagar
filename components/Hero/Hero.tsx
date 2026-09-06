@@ -8,22 +8,79 @@ import Scene from "@/three/Scene";
 import { animateHeroText } from "@/animations/hero";
 import { useContactModal } from "@/context/ContactModalContext";
 
+const heroServices = [
+  {
+    label: "Website",
+    target: "#service-web",
+    highlightSelectors: ["#service-web"],
+  },
+  {
+    label: "Application",
+    target: "#service-mobile",
+    highlightSelectors: ["#service-mobile", "#service-desktop"],
+  },
+  {
+    label: "Digital Marketing",
+    target: "#service-marketing",
+    highlightSelectors: ["#service-marketing"],
+  },
+  {
+    label: "IT Services",
+    target: "#service-it",
+    highlightSelectors: ["#service-it"],
+  },
+];
+
 export default function Hero() {
   const titleRef = useRef<HTMLHeadingElement>(null);
-  const subtitleRef = useRef<HTMLParagraphElement>(null);
+  const subtitleRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
   const { openContactModal } = useContactModal();
   
   const lenis = useLenis();
   const handleScroll = (e: React.MouseEvent<HTMLAnchorElement>, target: string) => {
     e.preventDefault();
-    lenis?.scrollTo(target);
+    if (lenis) {
+      lenis.scrollTo(target, { offset: -80, duration: 1.2 });
+    } else {
+      const el = document.querySelector(target);
+      el?.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  const handleServiceClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    target: string,
+    highlightSelectors: string[]
+  ) => {
+    e.preventDefault();
+
+    // Smooth scroll directly to the service item
+    if (lenis) {
+      lenis.scrollTo(target, { offset: -90, duration: 1.2 });
+    } else {
+      const el = document.querySelector(target);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+
+    // Temporarily apply highlight ring & glow to the matching card(s)
+    highlightSelectors.forEach((sel) => {
+      const el = document.querySelector(sel);
+      if (el) {
+        el.classList.add("ring-2", "ring-accent", "shadow-[0_0_35px_rgba(139,92,246,0.5)]");
+        setTimeout(() => {
+          el.classList.remove("ring-2", "ring-accent", "shadow-[0_0_35px_rgba(139,92,246,0.5)]");
+        }, 2500);
+      }
+    });
   };
 
   useEffect(() => {
     // Small delay to ensure styles and canvas are ready
     const timer = setTimeout(() => {
-      animateHeroText(titleRef, subtitleRef, ctaRef);
+      animateHeroText(titleRef, subtitleRef as any, ctaRef);
     }, 100);
     return () => clearTimeout(timer);
   }, []);
@@ -50,19 +107,29 @@ export default function Hero() {
 
         <div 
           ref={subtitleRef}
-          className="mt-8 flex flex-wrap justify-center gap-3 md:gap-4 max-w-3xl"
+          className="mt-8 flex flex-wrap justify-center gap-3 md:gap-4 max-w-3xl pointer-events-auto"
         >
-          {["Website", "Application", "Digital Marketing", "IT Services"].map((service, i) => (
-            <motion.span
-              key={service}
+          {heroServices.map((service, i) => (
+            <motion.a
+              key={service.label}
+              href={service.target}
+              onClick={(e) => handleServiceClick(e, service.target, service.highlightSelectors)}
               initial={{ opacity: 0, scale: 0.8, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               transition={{ delay: 1.2 + i * 0.15, duration: 0.6, type: "spring", bounce: 0.4 }}
-              whileHover={{ scale: 1.05, backgroundColor: "rgba(139, 92, 246, 0.15)", borderColor: "rgba(139, 92, 246, 0.4)", color: "#fff" }}
-              className="px-4 py-2 md:px-6 md:py-2.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-sm text-sm md:text-base font-medium text-white/70 cursor-default transition-colors shadow-[0_0_15px_rgba(0,0,0,0.2)]"
+              whileHover={{ 
+                scale: 1.05, 
+                backgroundColor: "rgba(139, 92, 246, 0.2)", 
+                borderColor: "rgba(139, 92, 246, 0.5)", 
+                color: "#fff",
+                boxShadow: "0 0 20px rgba(139, 92, 246, 0.3)"
+              }}
+              whileTap={{ scale: 0.96 }}
+              className="group px-4 py-2 md:px-6 md:py-2.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-sm text-sm md:text-base font-medium text-white/75 hover:text-white cursor-pointer transition-all shadow-[0_0_15px_rgba(0,0,0,0.2)] flex items-center gap-1.5"
             >
-              {service}
-            </motion.span>
+              <span>{service.label}</span>
+              <ArrowUpRight className="w-3.5 h-3.5 opacity-40 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all text-accent" />
+            </motion.a>
           ))}
         </div>
 

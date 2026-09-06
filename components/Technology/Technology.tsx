@@ -10,7 +10,6 @@ import {
   Database, 
   BrainCircuit, 
   Sparkles, 
-  Zap, 
   Cpu, 
   Activity, 
   ShieldCheck, 
@@ -479,39 +478,6 @@ export default function Technology() {
             </motion.div>
           ))}
         </div>
-
-        {/* ========================================= */}
-        {/* BOTTOM ECOSYSTEM SPECS SUMMARY BAR */}
-        {/* ========================================= */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mt-14 p-6 sm:p-8 rounded-3xl bg-white/[0.02] border border-white/10 flex flex-col md:flex-row items-center justify-between gap-6"
-        >
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-accent/10 border border-accent/30 flex items-center justify-center text-accent shrink-0">
-              <Zap className="w-6 h-6 animate-pulse" />
-            </div>
-            <div>
-              <h4 className="text-base sm:text-lg font-bold text-white">
-                Need a tailored enterprise technology stack?
-              </h4>
-              <p className="text-xs sm:text-sm text-white/60 mt-0.5">
-                We custom-architect your stack for compliance, extreme traffic throughput, or edge AI latency.
-              </p>
-            </div>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => openContactModal("Custom Architecture")}
-            className="w-full sm:w-auto px-6 py-3 rounded-full bg-white hover:bg-accent text-black hover:text-white font-bold text-xs tracking-wider uppercase transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.15)] shrink-0 cursor-pointer flex items-center justify-center gap-2"
-          >
-            <span>Consult our Architects</span>
-            <ArrowUpRight className="w-4 h-4" />
-          </button>
-        </motion.div>
 
       </div>
     </section>

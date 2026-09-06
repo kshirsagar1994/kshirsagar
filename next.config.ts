@@ -4,6 +4,19 @@ const nextConfig: NextConfig = {
   // Hide the X-Powered-By: Next.js header from responses
   poweredByHeader: false,
 
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
+      {
+        protocol: "https",
+        hostname: "cdn.21st.dev",
+      },
+    ],
+  },
+
   // Security headers applied to all routes
   async headers() {
     return [
@@ -41,7 +54,7 @@ const nextConfig: NextConfig = {
               "script-src 'self' 'unsafe-eval' 'unsafe-inline'",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "font-src 'self' https://fonts.gstatic.com",
-              "img-src 'self' data: blob: https://cdn.jsdelivr.net https://raw.githubusercontent.com",
+              "img-src 'self' data: blob: https://cdn.jsdelivr.net https://raw.githubusercontent.com https://images.unsplash.com https://cdn.21st.dev",
               "connect-src 'self' https://cdn.jsdelivr.net https://raw.githubusercontent.com",
               "worker-src 'self' blob:",
               "frame-ancestors 'none'",

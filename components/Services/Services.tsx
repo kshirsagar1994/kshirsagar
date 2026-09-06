@@ -12,13 +12,13 @@ import {
   Sparkles, 
   ChevronDown, 
   ArrowUpRight, 
-  Activity, 
-  Zap 
+  Activity 
 } from "lucide-react";
 import { useContactModal } from "@/context/ContactModalContext";
 
 interface ServiceItem {
   id: string;
+  slug: string;
   title: string;
   subtitle: string;
   category: string;
@@ -34,6 +34,7 @@ interface ServiceItem {
 const services: ServiceItem[] = [
   {
     id: "01",
+    slug: "service-web",
     title: "Web Development",
     subtitle: "Scalable & Performant",
     category: "FRONTEND & WEB PLATFORMS",
@@ -54,6 +55,7 @@ const services: ServiceItem[] = [
   },
   {
     id: "02",
+    slug: "service-mobile",
     title: "Mobile App Development",
     subtitle: "Native & Cross-Platform",
     category: "MOBILE ECOSYSTEM",
@@ -74,6 +76,7 @@ const services: ServiceItem[] = [
   },
   {
     id: "03",
+    slug: "service-desktop",
     title: "Desktop App Development",
     subtitle: "Robust & Secure",
     category: "DESKTOP SYSTEMS",
@@ -94,6 +97,7 @@ const services: ServiceItem[] = [
   },
   {
     id: "04",
+    slug: "service-marketing",
     title: "Digital Marketing & SEO",
     subtitle: "Growth & Visibility",
     category: "GROWTH & CONVERSION",
@@ -114,6 +118,7 @@ const services: ServiceItem[] = [
   },
   {
     id: "05",
+    slug: "service-business",
     title: "Business Software Solutions",
     subtitle: "Custom & Scalable",
     category: "ENTERPRISE ERP & CRM",
@@ -134,6 +139,7 @@ const services: ServiceItem[] = [
   },
   {
     id: "06",
+    slug: "service-it",
     title: "IT Services & Cloud",
     subtitle: "Support & Infrastructure",
     category: "MANAGED INFRASTRUCTURE",
@@ -165,7 +171,6 @@ const containerVariants = {
 };
 
 export default function Services() {
-  const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
   const { openContactModal } = useContactModal();
 
@@ -233,16 +238,15 @@ export default function Services() {
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4"
         >
           {services.map((service) => {
-            const isExpanded = hoveredId === service.id || activeId === service.id;
+            const isExpanded = activeId === service.id;
 
             return (
               <motion.div
                 key={service.id}
+                id={service.slug}
                 layout
-                onMouseEnter={() => setHoveredId(service.id)}
-                onMouseLeave={() => setHoveredId(null)}
                 onClick={() => handleCardClick(service.id)}
-                className={`group relative rounded-2xl p-4 sm:p-4.5 transition-all duration-300 backdrop-blur-xl border shadow-lg overflow-hidden cursor-pointer flex flex-col justify-between min-h-[195px] sm:min-h-[205px] ${
+                className={`scroll-mt-28 group relative rounded-2xl p-4 sm:p-4.5 transition-all duration-300 backdrop-blur-xl border shadow-lg overflow-hidden cursor-pointer flex flex-col justify-between min-h-[195px] sm:min-h-[205px] ${
                   isExpanded
                     ? "bg-[#0d0d1a]/95 border-accent shadow-[0_0_30px_rgba(139,92,246,0.25)]"
                     : "bg-[#090b14]/90 border-white/10 hover:border-white/25 hover:bg-[#0d0e1a]/90"
@@ -284,15 +288,23 @@ export default function Services() {
                       <span className="text-xs font-mono font-bold tracking-widest text-white/40">
                         {service.id}
                       </span>
-                      <div 
-                        className={`w-6 h-6 rounded-full flex items-center justify-center border transition-all duration-300 ${
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleCardClick(service.id);
+                        }}
+                        aria-label={isExpanded ? `Collapse ${service.title}` : `Expand ${service.title}`}
+                        aria-expanded={isExpanded}
+                        title={isExpanded ? "Collapse" : "Expand"}
+                        className={`w-7 h-7 rounded-full flex items-center justify-center border transition-all duration-300 cursor-pointer ${
                           isExpanded
-                            ? "bg-accent text-white border-accent rotate-180 shadow-[0_0_10px_rgba(139,92,246,0.5)]"
-                            : "bg-white/5 text-white/40 border-white/10 group-hover:text-white group-hover:border-white/20"
+                            ? "bg-accent text-white border-accent rotate-180 shadow-[0_0_12px_rgba(139,92,246,0.5)]"
+                            : "bg-white/5 text-white/40 border-white/10 hover:bg-accent/20 hover:text-white hover:border-accent/40"
                         }`}
                       >
-                        <ChevronDown className="w-3 h-3" />
-                      </div>
+                        <ChevronDown className="w-3.5 h-3.5 transition-transform" />
+                      </button>
                     </div>
                   </div>
 
@@ -336,7 +348,8 @@ export default function Services() {
                             opacity: { duration: 0.12 }
                           } 
                         }}
-                        className="overflow-hidden"
+                        onClick={(e) => e.stopPropagation()}
+                        className="overflow-hidden cursor-default"
                       >
                         <div className="pt-3 mt-2 border-t border-white/10">
                           <p className="text-xs text-white/60 leading-relaxed mb-3">
@@ -383,37 +396,6 @@ export default function Services() {
               </motion.div>
             );
           })}
-        </motion.div>
-
-        {/* Bottom Consultation Banner - Compacted */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mt-5 p-3.5 sm:p-4 rounded-2xl bg-white/[0.02] border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3"
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-accent/10 border border-accent/30 flex items-center justify-center text-accent shrink-0">
-              <Zap className="w-4 h-4 animate-pulse" />
-            </div>
-            <div>
-              <h4 className="text-xs sm:text-sm font-bold text-white">
-                Have a specialized project or enterprise requirement?
-              </h4>
-              <p className="text-[11px] text-white/50 mt-0.5">
-                We provide custom engineering sprints, cross-discipline teams, and dedicated technical leadership.
-              </p>
-            </div>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => openContactModal("Custom Service Consultation")}
-            className="w-full sm:w-auto px-4 py-2 rounded-full bg-white hover:bg-accent text-black hover:text-white font-bold text-[11px] tracking-wider uppercase transition-all duration-300 shadow-[0_0_15px_rgba(255,255,255,0.12)] shrink-0 cursor-pointer flex items-center justify-center gap-1.5"
-          >
-            <span>Start a Project</span>
-            <ArrowUpRight className="w-3.5 h-3.5" />
-          </button>
         </motion.div>
 
       </div>
