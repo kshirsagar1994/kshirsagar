@@ -39,6 +39,36 @@ import {
   Music
 } from "lucide-react";
 
+const BrowserBar = ({
+  url,
+  badge,
+  badgeClass = "text-cyan-400 bg-cyan-500/10 border-cyan-500/25",
+  urlColor = "text-cyan-200/70",
+  barBg = "bg-[#0b0f1a]",
+  pillBorder = "border-cyan-500/20",
+}: {
+  url: string;
+  badge: string;
+  badgeClass?: string;
+  urlColor?: string;
+  barBg?: string;
+  pillBorder?: string;
+}) => (
+  <div className={`h-8 sm:h-9 ${barBg} border-b border-white/10 px-4 flex items-center justify-between shrink-0`}>
+    <div className="flex items-center gap-2">
+      <div className="w-2.5 h-2.5 rounded-full bg-rose-500/80" />
+      <div className="w-2.5 h-2.5 rounded-full bg-amber-500/80" />
+      <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
+    </div>
+    <div className={`bg-[#121827] px-3.5 py-0.5 rounded-full text-[10px] sm:text-[11px] ${urlColor} font-mono flex items-center gap-1.5 border ${pillBorder}`}>
+      <span>🔒</span> {url}
+    </div>
+    <div className={`text-[10px] ${badgeClass} px-2 py-0.5 rounded border font-mono`}>
+      {badge}
+    </div>
+  </div>
+);
+
 // ==========================================
 // 1. AIOD (All-In-One Downloader) Product Screen
 // ==========================================
@@ -55,20 +85,10 @@ export const AIODScreen = () => {
 
   return (
     <div className="absolute inset-0 bg-[#060911] text-white flex flex-col font-sans select-none overflow-hidden">
-      {/* Browser Bar */}
-      <div className="h-8 bg-[#0b0f1a] border-b border-white/10 px-4 flex items-center justify-between shrink-0">
-        <div className="flex items-center gap-2">
-          <div className="w-2.5 h-2.5 rounded-full bg-rose-500/80" />
-          <div className="w-2.5 h-2.5 rounded-full bg-amber-500/80" />
-          <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
-        </div>
-        <div className="bg-[#121827] px-3.5 py-0.5 rounded-full text-[10px] text-cyan-200/70 font-mono flex items-center gap-1.5 border border-cyan-500/20">
-          <span className="text-cyan-400">🔒</span> https://aiod.media/downloader
-        </div>
-        <div className="text-[10px] text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/25 font-mono">
-          All-In-One Media Downloader
-        </div>
-      </div>
+      <BrowserBar
+        url="https://aiod.media/downloader"
+        badge="All-In-One Media Downloader"
+      />
 
       {/* Website Navigation Header */}
       <div className="h-11 bg-[#090d18]/90 border-b border-white/5 px-4 sm:px-6 flex items-center justify-between shrink-0 relative z-20 backdrop-blur-md">
@@ -297,20 +317,14 @@ export const SwamiRatnaScreen = () => {
 
   return (
     <div className="absolute inset-0 bg-[#070b14] text-white flex flex-col font-sans select-none overflow-hidden">
-      {/* Browser Bar */}
-      <div className="h-9 bg-[#0d1424] border-b border-blue-900/30 px-4 flex items-center justify-between shrink-0">
-        <div className="flex items-center gap-2">
-          <div className="w-2.5 h-2.5 rounded-full bg-rose-500/80" />
-          <div className="w-2.5 h-2.5 rounded-full bg-amber-500/80" />
-          <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
-        </div>
-        <div className="bg-[#141d33] px-4 py-1 rounded-full text-[11px] text-blue-200/80 font-mono flex items-center gap-1.5 border border-blue-500/20">
-          <span className="text-blue-400">🔒</span> https://swamiratnaconsultancy.com/jobs
-        </div>
-        <div className="text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20 font-mono">
-          Verified Placement Agency
-        </div>
-      </div>
+      <BrowserBar
+        url="https://swamiratnaconsultancy.com/jobs"
+        badge="Verified Placement Agency"
+        barBg="bg-[#0d1424]"
+        pillBorder="border-blue-500/20"
+        urlColor="text-blue-200/80"
+        badgeClass="text-emerald-400 bg-emerald-500/10 border-emerald-500/20"
+      />
 
       {/* Hero Body */}
       <div className="flex-1 p-4 sm:p-6 flex flex-col justify-between relative overflow-hidden bg-gradient-to-b from-[#0d1424] to-[#070b14]">
@@ -431,20 +445,14 @@ export const SwamiRatnaScreen = () => {
 export const MyPortfolioScreen = () => {
   return (
     <div className="absolute inset-0 bg-[#090a0f] text-white flex flex-col font-sans select-none overflow-hidden">
-      {/* Browser Bar */}
-      <div className="h-9 bg-[#10121a] border-b border-white/10 px-4 flex items-center justify-between shrink-0">
-        <div className="flex items-center gap-2">
-          <div className="w-2.5 h-2.5 rounded-full bg-rose-500/80" />
-          <div className="w-2.5 h-2.5 rounded-full bg-amber-500/80" />
-          <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
-        </div>
-        <div className="bg-[#181c28] px-4 py-1 rounded-full text-[11px] text-white/60 font-mono flex items-center gap-1.5 border border-white/5">
-          <span className="text-purple-400">⚡</span> https://kshirsagar1994.github.io/MyPortfolio
-        </div>
-        <div className="text-[10px] text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded border border-purple-500/20 font-mono">
-          Interactive Portfolio
-        </div>
-      </div>
+      <BrowserBar
+        url="https://kshirsagar1994.github.io/MyPortfolio"
+        badge="Interactive Portfolio"
+        barBg="bg-[#10121a]"
+        pillBorder="border-white/5"
+        urlColor="text-white/60"
+        badgeClass="text-purple-400 bg-purple-500/10 border-purple-500/20"
+      />
 
       {/* Main Developer Hero Screen */}
       <div className="flex-1 p-4 sm:p-6 flex flex-col justify-between relative overflow-hidden">
@@ -519,20 +527,14 @@ export const VVKSmartTechScreen = () => {
 
   return (
     <div className="absolute inset-0 bg-[#062e1a] text-white flex flex-col font-sans select-none overflow-hidden">
-      {/* Browser Bar */}
-      <div className="h-8 bg-[#041d11] border-b border-white/10 px-4 flex items-center justify-between shrink-0">
-        <div className="flex items-center gap-2">
-          <div className="w-2.5 h-2.5 rounded-full bg-rose-500/80" />
-          <div className="w-2.5 h-2.5 rounded-full bg-amber-500/80" />
-          <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
-        </div>
-        <div className="bg-[#0b2b1a] px-3.5 py-0.5 rounded-full text-[10px] text-emerald-200/80 font-mono flex items-center gap-1.5 border border-emerald-500/25">
-          <span className="text-emerald-400">🔒</span> https://www.vvksmarttech.com
-        </div>
-        <div className="text-[10px] text-emerald-300 bg-emerald-500/15 px-2 py-0.5 rounded border border-emerald-500/30 font-mono">
-          Official Website
-        </div>
-      </div>
+      <BrowserBar
+        url="https://www.vvksmarttech.com"
+        badge="Official Website"
+        barBg="bg-[#041d11]"
+        pillBorder="border-emerald-500/25"
+        urlColor="text-emerald-200/80"
+        badgeClass="text-emerald-300 bg-emerald-500/15 border-emerald-500/30"
+      />
 
       {/* Website Navigation Header (from actual vvksmarttech.com) */}
       <div className="h-11 bg-white/5 border-b border-white/10 px-4 sm:px-6 flex items-center justify-between shrink-0 relative z-20 backdrop-blur-md">
@@ -677,20 +679,14 @@ export const DMSScreen = () => {
 
   return (
     <div className="absolute inset-0 bg-[#090a10] text-white flex flex-col font-sans select-none overflow-hidden">
-      {/* Browser Bar */}
-      <div className="h-9 bg-[#11131c] border-b border-indigo-900/30 px-4 flex items-center justify-between shrink-0">
-        <div className="flex items-center gap-2">
-          <div className="w-2.5 h-2.5 rounded-full bg-rose-500/80" />
-          <div className="w-2.5 h-2.5 rounded-full bg-amber-500/80" />
-          <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
-        </div>
-        <div className="bg-[#181b28] px-4 py-1 rounded-full text-[11px] text-indigo-200/80 font-mono flex items-center gap-1.5 border border-indigo-500/20">
-          <span className="text-indigo-400">🔒</span> https://dms.enterprise.internal/dashboard
-        </div>
-        <div className="text-[10px] text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/30">
-          Enterprise ERP/DMS
-        </div>
-      </div>
+      <BrowserBar
+        url="https://dms.enterprise.internal/dashboard"
+        badge="Enterprise ERP/DMS"
+        barBg="bg-[#11131c]"
+        pillBorder="border-indigo-500/20"
+        urlColor="text-indigo-200/80"
+        badgeClass="text-indigo-400 bg-indigo-500/10 border-indigo-500/30"
+      />
 
       {/* Main SaaS Dashboard Screen */}
       <div className="flex-1 p-3 sm:p-5 flex flex-col justify-between relative overflow-hidden bg-gradient-to-b from-[#11131c] to-[#090a10]">

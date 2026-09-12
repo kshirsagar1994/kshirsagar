@@ -6,155 +6,87 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { name, email, phone, service, budget, timeline, message } = body;
 
-    // Validate required fields
-    if (!name || !email || !message) {
-      return NextResponse.json(
-        { error: "Name, email, and message are required." },
-        { status: 400 }
-      );
+    if (!name?.trim() || !email?.trim() || !message?.trim()) {
+      return NextResponse.json({ error: "Name, email, and message are required." }, { status: 400 });
     }
 
     const receiverEmail = process.env.CONTACT_RECEIVER_EMAIL || "ajaykshirsagar1208@gmail.com";
-    const smtpHost = process.env.SMTP_HOST;
-    const smtpUser = process.env.SMTP_USER;
-    const smtpPass = process.env.SMTP_PASS;
-    const smtpPort = process.env.SMTP_PORT ? parseInt(process.env.SMTP_PORT, 10) : 587;
+    const { SMTP_HOST: host, SMTP_USER: user, SMTP_PASS: pass, SMTP_PORT: portStr } = process.env;
 
     const emailSubject = `🚀 New Project Inquiry from ${name} - ${service || "General Inquiry"}`;
-    
+    const row = (label: string, val: string | undefined, isHighlight = false) =>
+      val?.trim()
+        ? `<tr><td style="padding:8px 0;color:#a1a1aa;width:140px;font-weight:500;">${label}:</td>
+           <td style="padding:8px 0;color:${isHighlight ? '#c4b5fd' : '#ffffff'};font-weight:600;">${val}</td></tr>`
+        : "";
+
     const emailHtml = `
-      <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 650px; margin: 0 auto; background-color: #0d0d12; color: #ffffff; padding: 32px; border-radius: 12px; border: 1px solid #27272a;">
-        <div style="border-bottom: 2px solid #8b5cf6; padding-bottom: 16px; margin-bottom: 24px;">
-          <h2 style="color: #ffffff; margin: 0 0 6px 0; font-size: 24px; font-weight: 700; letter-spacing: 0.05em;">KSHIRSAGAR TECHNOLOGY</h2>
-          <p style="color: #8b5cf6; margin: 0; font-size: 14px; font-weight: 600; text-transform: uppercase;">New Project Lead Received</p>
+      <div style="font-family:'Segoe UI',Arial,sans-serif;max-width:650px;margin:0 auto;background:#0d0d12;color:#fff;padding:32px;border-radius:12px;border:1px solid #27272a;">
+        <div style="border-bottom:2px solid #8b5cf6;padding-bottom:16px;margin-bottom:24px;">
+          <h2 style="color:#fff;margin:0 0 6px;font-size:24px;font-weight:700;">KSHIRSAGAR TECHNOLOGY</h2>
+          <p style="color:#8b5cf6;margin:0;font-size:14px;font-weight:600;text-transform:uppercase;">New Project Lead Received</p>
         </div>
-
-        <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px;">
-          <tr>
-            <td style="padding: 10px 0; color: #a1a1aa; width: 140px; font-weight: 500;">Client Name:</td>
-            <td style="padding: 10px 0; color: #ffffff; font-weight: 600;">${name}</td>
-          </tr>
-          <tr>
-            <td style="padding: 10px 0; color: #a1a1aa; font-weight: 500;">Email:</td>
-            <td style="padding: 10px 0; color: #8b5cf6; font-weight: 600;"><a href="mailto:${email}" style="color: #a78bfa; text-decoration: none;">${email}</a></td>
-          </tr>
-          ${phone ? `
-          <tr>
-            <td style="padding: 10px 0; color: #a1a1aa; font-weight: 500;">Phone / WhatsApp:</td>
-            <td style="padding: 10px 0; color: #ffffff; font-weight: 600;"><a href="tel:${phone}" style="color: #ffffff; text-decoration: none;">${phone}</a></td>
-          </tr>` : ""}
-          ${service ? `
-          <tr>
-            <td style="padding: 10px 0; color: #a1a1aa; font-weight: 500;">Service Required:</td>
-            <td style="padding: 10px 0; color: #ffffff; font-weight: 600;"><span style="background: rgba(139, 92, 246, 0.2); color: #c4b5fd; padding: 4px 10px; border-radius: 9999px; border: 1px solid rgba(139, 92, 246, 0.4);">${service}</span></td>
-          </tr>` : ""}
-          ${budget ? `
-          <tr>
-            <td style="padding: 10px 0; color: #a1a1aa; font-weight: 500;">Estimated Budget:</td>
-            <td style="padding: 10px 0; color: #34d399; font-weight: 600;">${budget}</td>
-          </tr>` : ""}
-          ${timeline ? `
-          <tr>
-            <td style="padding: 10px 0; color: #a1a1aa; font-weight: 500;">Target Timeline:</td>
-            <td style="padding: 10px 0; color: #ffffff; font-weight: 500;">${timeline}</td>
-          </tr>` : ""}
+        <table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
+          ${row("Client Name", name)}
+          ${row("Email", `<a href="mailto:${email}" style="color:#a78bfa;text-decoration:none;">${email}</a>`)}
+          ${row("Phone / WhatsApp", phone ? `<a href="tel:${phone}" style="color:#fff;text-decoration:none;">${phone}</a>` : undefined)}
+          ${row("Service Required", service, true)}
+          ${row("Estimated Budget", budget)}
+          ${row("Target Timeline", timeline)}
         </table>
-
-        <div style="background-color: #18181b; padding: 20px; border-radius: 8px; border: 1px solid #27272a; margin-bottom: 24px;">
-          <h4 style="color: #a1a1aa; margin: 0 0 10px 0; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em;">Project Brief / Message:</h4>
-          <p style="color: #f4f4f5; margin: 0; line-height: 1.6; white-space: pre-wrap; font-size: 15px;">${message}</p>
+        <div style="background:#18181b;padding:20px;border-radius:8px;border:1px solid #27272a;margin-bottom:24px;">
+          <h4 style="color:#a1a1aa;margin:0 0 10px;font-size:13px;text-transform:uppercase;">Project Brief:</h4>
+          <p style="color:#f4f4f5;margin:0;line-height:1.6;white-space:pre-wrap;font-size:15px;">${message}</p>
         </div>
-
-        <div style="border-top: 1px solid #27272a; padding-top: 16px; font-size: 12px; color: #71717a; text-align: center;">
-          Sent from Kshirsagar Website Interactive Contact System • ${new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })} IST
+        <div style="border-top:1px solid #27272a;padding-top:16px;font-size:12px;color:#71717a;text-align:center;">
+          Sent from Kshirsagar Website • ${new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })} IST
         </div>
       </div>
     `;
 
-    // Check if SMTP is configured
-    if (smtpHost && smtpUser && smtpPass) {
+    if (host && user && pass) {
       const transporter = nodemailer.createTransport({
-        host: smtpHost,
-        port: smtpPort,
-        secure: smtpPort === 465,
-        auth: {
-          user: smtpUser,
-          pass: smtpPass,
-        },
+        host,
+        port: portStr ? parseInt(portStr, 10) : 587,
+        secure: portStr === "465",
+        auth: { user, pass },
       });
 
       await transporter.sendMail({
-        from: `"Kshirsagar Website" <${smtpUser}>`,
+        from: `"Kshirsagar Website" <${user}>`,
         to: receiverEmail,
         replyTo: email,
         subject: emailSubject,
         html: emailHtml,
       });
-
-      console.log(`[Contact API] Email successfully dispatched to ${receiverEmail}`);
+      console.log(`[Contact API] Dispatched to ${receiverEmail}`);
     } else {
-      // Development / unconfigured SMTP mode: log full structured details
-      console.log("--------------------------------------------------");
-      console.log("📩 NEW PROJECT INQUIRY RECEIVED (SMTP not configured, logging to console):");
-      console.log(`From: ${name} <${email}>`);
-      console.log(`Phone: ${phone || "N/A"}`);
-      console.log(`Service: ${service || "N/A"}`);
-      console.log(`Budget: ${budget || "N/A"}`);
-      console.log(`Timeline: ${timeline || "N/A"}`);
-      console.log(`Message:\n${message}`);
-      console.log("--------------------------------------------------");
+      console.log(`📩 INQUIRY: ${name} <${email}> | Phone: ${phone || "N/A"} | Srv: ${service || "N/A"}`);
     }
 
-    // Optional CallMeBot WhatsApp automated alert if configured in env
-    const callmebotApiKey = process.env.CALLMEBOT_API_KEY;
-    const whatsappWebhookUrl = process.env.WHATSAPP_WEBHOOK_URL;
+    // CallMeBot / Webhook WhatsApp alert if configured
+    const callmebotKey = process.env.CALLMEBOT_API_KEY;
+    const webhookUrl = process.env.WHATSAPP_WEBHOOK_URL;
 
-    if (callmebotApiKey) {
-      try {
-        const waText = encodeURIComponent(`*New Kshirsagar Website Lead*\nName: ${name}\nEmail: ${email}\nPhone: ${phone || "N/A"}\nService: ${service || "General"}\nMessage: ${message}`);
-        await fetch(`https://api.callmebot.com/whatsapp.php?phone=919595749597&text=${waText}&apikey=${callmebotApiKey}`);
-        console.log("[Contact API] Server-side WhatsApp notification triggered via CallMeBot.");
-      } catch (waErr) {
-        console.warn("[Contact API] Could not trigger CallMeBot:", waErr);
-      }
-    } else if (whatsappWebhookUrl) {
-      try {
-        await fetch(whatsappWebhookUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            receiverPhone: "+919595749597",
-            receiverEmail,
-            name,
-            email,
-            phone,
-            service,
-            budget,
-            timeline,
-            message,
-          }),
-        });
-        console.log("[Contact API] Server-side WhatsApp webhook triggered.");
-      } catch (waErr) {
-        console.warn("[Contact API] Could not trigger WhatsApp webhook:", waErr);
-      }
+    if (callmebotKey) {
+      const waText = encodeURIComponent(`*New Kshirsagar Lead*\nName: ${name}\nEmail: ${email}\nPhone: ${phone || "N/A"}\nService: ${service || "General"}\nMessage: ${message}`);
+      fetch(`https://api.callmebot.com/whatsapp.php?phone=919595749597&text=${waText}&apikey=${callmebotKey}`).catch(() => {});
+    } else if (webhookUrl) {
+      fetch(webhookUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ receiverPhone: "+919595749597", receiverEmail, name, email, phone, service, budget, timeline, message }),
+      }).catch(() => {});
     }
 
-    return NextResponse.json(
-      {
-        success: true,
-        message: "Thank you! Your project requirement has been dispatched to Ajay Kshirsagar.",
-        receiverEmail: "ajaykshirsagar1208@gmail.com",
-        receiverPhone: "+91-9595749597",
-      },
-      { status: 200 }
-    );
-  } catch (error: unknown) {
+    return NextResponse.json({
+      success: true,
+      message: "Thank you! Your project requirement has been dispatched to Ajay Kshirsagar.",
+      receiverEmail: "ajaykshirsagar1208@gmail.com",
+      receiverPhone: "+91-9595749597",
+    });
+  } catch (error: any) {
     console.error("[Contact API Error]:", error);
-    const errorMessage = error instanceof Error ? error.message : "Failed to process inquiry.";
-    return NextResponse.json(
-      { error: errorMessage },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: error.message || "Failed to process inquiry." }, { status: 500 });
   }
 }
