@@ -4,7 +4,13 @@ const nextConfig: NextConfig = {
   // Hide the X-Powered-By: Next.js header from responses
   poweredByHeader: false,
 
+  // Optimize heavy package imports for minimal bundle size
+  experimental: {
+    optimizePackageImports: ["lucide-react", "@hugeicons/react", "framer-motion"],
+  },
+
   images: {
+    formats: ["image/avif", "image/webp"],
     remotePatterns: [
       {
         protocol: "https",

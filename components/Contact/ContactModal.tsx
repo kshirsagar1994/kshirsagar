@@ -4,7 +4,16 @@ import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Sparkles } from "lucide-react";
 import { useContactModal } from "@/context/ContactModalContext";
-import ProjectInquiryForm from "./ProjectInquiryForm";
+import dynamic from "next/dynamic";
+
+const ProjectInquiryForm = dynamic(() => import("./ProjectInquiryForm"), {
+  ssr: false,
+  loading: () => (
+    <div className="h-64 flex items-center justify-center text-zinc-500 font-mono text-sm">
+      Loading inquiry form...
+    </div>
+  ),
+});
 
 export default function ContactModal() {
   const { isOpen, selectedService, closeContactModal } = useContactModal();

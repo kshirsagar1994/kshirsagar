@@ -2,34 +2,32 @@ import gsap from "gsap";
 
 export const animateHeroText = (
   titleRef: React.RefObject<HTMLHeadingElement | null>,
-  subtitleRef: React.RefObject<HTMLParagraphElement | null>,
+  subtitleRef: React.RefObject<HTMLDivElement | null>,
   ctaRef: React.RefObject<HTMLDivElement | null>
 ) => {
-  if (!titleRef.current || !subtitleRef.current || !ctaRef.current) return;
+  if (!titleRef.current) return;
 
   const ctx = gsap.context(() => {
-    const tl = gsap.timeline({ defaults: { ease: "power4.out" } });
+    const tl = gsap.timeline({ defaults: { ease: "power3.out", force3D: true } });
 
-    // Separate the words or lines (assuming we have spans or just text)
-    // For simplicity, we fade and slide up the whole lines
-    tl.fromTo(
-      titleRef.current!.children,
-      { y: 100, opacity: 0, rotationX: 20 },
-      { y: 0, opacity: 1, rotationX: 0, duration: 1.2, stagger: 0.15 }
-    )
-      .fromTo(
-        subtitleRef.current,
-        { y: 20, opacity: 0 },
-        { y: 0, opacity: 1, duration: 1 },
-        "-=0.6"
-      )
-      .fromTo(
+    // Use pure composited transform & opacity
+    if (titleRef.current?.children) {
+      tl.fromTo(
+        titleRef.current.children,
+        { y: 40, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.8, stagger: 0.1 }
+      );
+    }
+
+    if (ctaRef.current) {
+      tl.fromTo(
         ctaRef.current,
         { y: 20, opacity: 0 },
-        { y: 0, opacity: 1, duration: 1 },
-        "-=0.8"
+        { y: 0, opacity: 1, duration: 0.6 },
+        "-=0.4"
       );
-  }, titleRef.current?.parentElement || document.body); // use parent element as scope or fallback to body
+    }
+  }, titleRef.current?.parentElement || undefined);
 
   return () => ctx.revert();
 };

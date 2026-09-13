@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef } from "react";
-import { useLenis } from "lenis/react";
+import { useEffect, useRef } from "react";
+import Image from "next/image";
 
 const steps = [
   {
@@ -69,91 +69,124 @@ export default function Process() {
   const indicatorDotsRef = useRef<(HTMLDivElement | null)[]>([]);
   const stageCounterRef = useRef<HTMLSpanElement>(null);
 
-  useLenis(() => {
-    if (!containerRef.current) return;
-    
-    const el = containerRef.current;
-    const rect = el.getBoundingClientRect();
-    
-    // The total height of the section is 380vh.
-    // The sticky viewport takes 100vh.
-    const scrollDistance = el.scrollHeight - window.innerHeight;
-    const scrollIntoSection = -rect.top;
-    const p = Math.max(0, Math.min(1, scrollIntoSection / scrollDistance));
-    
-    // Update progress line
-    if (lineRef.current) {
-      lineRef.current.style.transform = `scaleY(${p})`;
-    }
-    
-    // Calculate which step should be active
-    const activeIndex = Math.min(
-      steps.length - 1,
-      Math.floor(p * steps.length)
-    );
-    
-    // Update stage counter
-    if (stageCounterRef.current) {
-      stageCounterRef.current.textContent = `0${activeIndex + 1} / 0${steps.length}`;
-    }
+  useEffect(() => {
+    let ticking = false;
+    let cachedTop = 0;
+    let cachedHeight = 0;
+    let cachedWinHeight = 0;
 
-    // Update indicator dots/pills
-    indicatorDotsRef.current.forEach((dot, idx) => {
-      if (!dot) return;
-      if (idx === activeIndex) {
-        dot.style.width = "28px";
-        dot.style.backgroundColor = "var(--color-accent, #8b5cf6)";
-        dot.style.opacity = "1";
-      } else {
-        dot.style.width = "8px";
-        dot.style.backgroundColor = "rgba(255, 255, 255, 0.2)";
-        dot.style.opacity = "0.5";
+    const measureLayout = () => {
+      if (!containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      cachedTop = rect.top + window.scrollY;
+      cachedHeight = containerRef.current.scrollHeight;
+      cachedWinHeight = window.innerHeight;
+    };
+
+    // Initial measurement
+    measureLayout();
+
+    const updateScroll = () => {
+      if (!containerRef.current) return;
+
+      const scrollY = window.scrollY;
+      const scrollDistance = cachedHeight - cachedWinHeight;
+      if (scrollDistance <= 0) return;
+
+      const scrollIntoSection = scrollY - cachedTop;
+      const p = Math.max(0, Math.min(1, scrollIntoSection / scrollDistance));
+
+      // Update progress line (GPU composited transform)
+      if (lineRef.current) {
+        lineRef.current.style.transform = `scaleY(${p})`;
       }
-    });
 
-    const stepSize = 1 / steps.length;
-    const stepLocalProgress = (p - activeIndex * stepSize) / stepSize;
-    
-    // Update each step
-    stepsRef.current.forEach((stepEl, index) => {
-      if (!stepEl) return;
-      
-      let opacity = 0;
-      let y = 40;
-      
-      if (index === activeIndex) {
-        if (stepLocalProgress <= 0.7) {
+      // Calculate which step should be active
+      const activeIndex = Math.min(
+        steps.length - 1,
+        Math.floor(p * steps.length)
+      );
+
+      // Update stage counter text
+      if (stageCounterRef.current) {
+        stageCounterRef.current.textContent = `0${activeIndex + 1} / 0${steps.length}`;
+      }
+
+      // Update indicator dots
+      indicatorDotsRef.current.forEach((dot, idx) => {
+        if (!dot) return;
+        if (idx === activeIndex) {
+          dot.style.width = "28px";
+          dot.style.backgroundColor = "var(--color-accent, #8b5cf6)";
+          dot.style.opacity = "1";
+        } else {
+          dot.style.width = "8px";
+          dot.style.backgroundColor = "rgba(255, 255, 255, 0.2)";
+          dot.style.opacity = "0.5";
+        }
+      });
+
+      const stepSize = 1 / steps.length;
+      const stepLocalProgress = (p - activeIndex * stepSize) / stepSize;
+
+      // Update each step element
+      stepsRef.current.forEach((stepEl, index) => {
+        if (!stepEl) return;
+
+        let opacity = 0;
+        let y = 30;
+
+        if (index === activeIndex) {
+          if (stepLocalProgress <= 0.7) {
+            opacity = 1;
+            y = 0;
+          } else {
+            const fadeProgress = (stepLocalProgress - 0.7) / 0.3;
+            opacity = 1 - fadeProgress;
+            y = -30 * fadeProgress;
+          }
+        } else if (index === activeIndex + 1) {
+          if (stepLocalProgress > 0.7) {
+            const fadeProgress = (stepLocalProgress - 0.7) / 0.3;
+            opacity = fadeProgress;
+            y = 30 * (1 - fadeProgress);
+          }
+        }
+
+        if (index === 0 && p === 0) {
           opacity = 1;
           y = 0;
-        } else {
-          const fadeProgress = (stepLocalProgress - 0.7) / 0.3;
-          opacity = 1 - fadeProgress;
-          y = -40 * fadeProgress;
         }
-      } else if (index === activeIndex + 1) {
-        if (stepLocalProgress > 0.7) {
-          const fadeProgress = (stepLocalProgress - 0.7) / 0.3;
-          opacity = fadeProgress;
-          y = 40 * (1 - fadeProgress);
+
+        if (index === steps.length - 1 && activeIndex === steps.length - 1) {
+          opacity = 1;
+          y = 0;
         }
+
+        stepEl.style.opacity = opacity.toString();
+        stepEl.style.transform = `translate3d(0, ${y}px, 0)`;
+        stepEl.style.visibility = opacity > 0 ? "visible" : "hidden";
+        stepEl.style.pointerEvents = opacity > 0 ? "auto" : "none";
+      });
+
+      ticking = false;
+    };
+
+    const onScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(updateScroll);
+        ticking = true;
       }
-      
-      if (index === 0 && p === 0) {
-        opacity = 1;
-        y = 0;
-      }
-      
-      if (index === steps.length - 1 && activeIndex === steps.length - 1) {
-        opacity = 1;
-        y = 0;
-      }
-      
-      stepEl.style.opacity = opacity.toString();
-      stepEl.style.transform = `translateY(${y}px)`;
-      stepEl.style.visibility = opacity > 0 ? "visible" : "hidden";
-      stepEl.style.pointerEvents = opacity > 0 ? "auto" : "none";
-    });
-  });
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", measureLayout, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", measureLayout);
+    };
+  }, []);
 
   return (
     <section 
@@ -211,7 +244,7 @@ export default function Process() {
             </div>
           </div>
 
-          {/* Right Side: Step Timeline & Enlarged Watermark Illustration */}
+          {/* Right Side: Step Timeline & Watermark Illustration */}
           <div className="w-full md:w-7/12 relative flex flex-col justify-center h-full">
             
             {/* Animated Progress Line Background */}
@@ -221,7 +254,7 @@ export default function Process() {
             <div 
               ref={lineRef}
               className="absolute left-0 top-1/4 h-1/2 w-1 bg-accent rounded-full origin-top hidden md:block shadow-[0_0_12px_rgba(139,92,246,0.6)]"
-              style={{ transform: "scaleY(0)" }}
+              style={{ transform: "scaleY(0)", willChange: "transform" }}
             />
 
             <div className="relative h-[380px] md:h-3/5 w-full md:ml-12 mt-8 md:mt-0">
@@ -234,21 +267,25 @@ export default function Process() {
                   className="absolute inset-0 flex flex-col justify-center p-6 md:p-10 rounded-3xl border border-white/[0.06] bg-gradient-to-br from-white/[0.04] via-white/[0.01] to-transparent backdrop-blur-[6px] shadow-2xl overflow-hidden"
                   style={{
                     opacity: index === 0 ? 1 : 0,
-                    transform: index === 0 ? "translateY(0)" : "translateY(40px)",
+                    transform: index === 0 ? "translate3d(0, 0, 0)" : "translate3d(0, 30px, 0)",
                     visibility: index === 0 ? "visible" : "hidden",
-                    pointerEvents: index === 0 ? "auto" : "none"
+                    pointerEvents: index === 0 ? "auto" : "none",
+                    willChange: "transform, opacity",
                   }}
                 >
-                  {/* Significantly Enlarged Watermark Artwork Behind Title */}
+                  {/* Watermark Artwork Behind Title */}
                   <div 
                     aria-hidden="true" 
                     className="absolute -top-12 -right-8 sm:-top-16 sm:-right-4 md:-top-20 md:-right-8 w-56 h-56 sm:w-72 sm:h-72 md:w-96 md:h-96 lg:w-[440px] lg:h-[440px] -z-10 pointer-events-none select-none opacity-20 sm:opacity-25 md:opacity-30 filter drop-shadow-[0_0_50px_rgba(139,92,246,0.25)] transition-transform duration-700"
                   >
                     {/* Atmospheric ambient glow */}
                     <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-accent/25 via-blue-500/15 to-transparent blur-3xl -z-10 scale-110" />
-                    <img 
+                    <Image 
                       src={step.image} 
                       alt="" 
+                      width={440}
+                      height={440}
+                      loading="lazy"
                       className="w-full h-full object-contain"
                     />
                   </div>
@@ -296,4 +333,3 @@ export default function Process() {
     </section>
   );
 }
-

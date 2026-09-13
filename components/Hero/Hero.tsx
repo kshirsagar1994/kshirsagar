@@ -78,11 +78,9 @@ export default function Hero() {
   };
 
   useEffect(() => {
-    // Small delay to ensure styles and canvas are ready
-    const timer = setTimeout(() => {
-      animateHeroText(titleRef, subtitleRef as any, ctaRef);
-    }, 100);
-    return () => clearTimeout(timer);
+    // Animate hero text cleanly once mounted
+    const cleanup = animateHeroText(titleRef, subtitleRef, ctaRef);
+    return () => cleanup?.();
   }, []);
 
   return (

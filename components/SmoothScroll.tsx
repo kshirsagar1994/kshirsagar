@@ -3,14 +3,31 @@
 import { ReactLenis } from "lenis/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function SmoothScroll({ children }: { children: React.ReactNode }) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const lenisRef = useRef<any>(null);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    // Ensure GSAP and ScrollTrigger are synchronized with Lenis
+    // Check if device is touch-primary / mobile
+    const checkMobile = () => {
+      const isTouch = 
+        window.innerWidth < 768 || 
+        window.matchMedia("(pointer: coarse)").matches ||
+        (typeof navigator !== "undefined" && navigator.maxTouchPoints > 1);
+      setIsMobile(isTouch);
+    };
+
+    checkMobile();
+
+    // On mobile devices, native hardware-accelerated scrolling is already optimal
+    if (window.innerWidth < 768) {
+      return;
+    }
+
+    // Register ScrollTrigger for desktop animations
     if (typeof window !== "undefined") {
       gsap.registerPlugin(ScrollTrigger);
     }
@@ -25,7 +42,8 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     }
   
     gsap.ticker.add(update);
-    gsap.ticker.lagSmoothing(0);
+    // Keep healthy lag smoothing to prevent main-thread freezing during heavy tasks
+    gsap.ticker.lagSmoothing(500, 33);
   
     return () => {
       gsap.ticker.remove(update);
@@ -35,15 +53,20 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     };
   }, []);
 
+  // For mobile devices, bypass Lenis completely to guarantee native 120Hz GPU scrolling with 0 CPU overhead
+  if (isMobile) {
+    return <>{children}</>;
+  }
+
   return (
     <ReactLenis
       ref={lenisRef}
       root
       autoRaf={false}
       options={{
-        lerp: 0.1, // Fast, responsive agency-grade smoothing (removes the 0.05 lag feeling)
-        wheelMultiplier: 1.15, // Enhanced scroll velocity per wheel rotation
-        touchMultiplier: 1.5,
+        lerp: 0.1,
+        wheelMultiplier: 1.15,
+        touchMultiplier: 0, // Never hijack native touch scrolling
         smoothWheel: true,
       }}
     >

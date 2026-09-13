@@ -9,15 +9,17 @@ export default function HeroObject() {
   const meshRef = useRef<THREE.Mesh>(null);
   const { pointer, viewport } = useThree();
 
-  useFrame((state, delta) => {
+  useFrame((_, delta) => {
     if (!meshRef.current) return;
 
-    // Slowly rotate over time
-    meshRef.current.rotation.x += delta * 0.1;
-    meshRef.current.rotation.y += delta * 0.15;
+    // Clamp delta to avoid massive jumps during backgrounding/tab-switching
+    const safeDelta = Math.min(delta, 0.05);
 
-    // Subtle reaction to mouse pointer
-    // We use lerp to make the movement smooth
+    // Slowly rotate over time
+    meshRef.current.rotation.x += safeDelta * 0.08;
+    meshRef.current.rotation.y += safeDelta * 0.12;
+
+    // Subtle reaction to mouse pointer with lerp
     const targetX = (pointer.x * viewport.width) / 20;
     const targetY = (pointer.y * viewport.height) / 20;
 
@@ -27,14 +29,14 @@ export default function HeroObject() {
 
   return (
     <Icosahedron ref={meshRef} args={[1.5, 2]} position={[0, 0, 0]}>
-      {/* Premium dark metallic material with a subtle glow */}
+      {/* Dark metallic material with subtle distortion */}
       <MeshDistortMaterial
         color="#111111"
         emissive="#1a1a24"
-        roughness={0.2}
-        metalness={0.8}
-        distort={0.2}
-        speed={1.5}
+        roughness={0.25}
+        metalness={0.75}
+        distort={0.15}
+        speed={1.0}
       />
     </Icosahedron>
   );
