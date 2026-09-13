@@ -78,16 +78,17 @@ html {
   will-change: transform;
 }
 
-@keyframes dash {
-  from {
-    stroke-dashoffset: 100;
+@keyframes synapsePulse {
+  0%, 100% {
+    opacity: 0.35;
   }
-  to {
-    stroke-dashoffset: 0;
+  50% {
+    opacity: 0.95;
   }
 }
 
 .animate-synapse-dash {
-  animation: dash 4s linear infinite;
+  animation: synapsePulse 3s ease-in-out infinite;
+  will-change: opacity;
 }
 

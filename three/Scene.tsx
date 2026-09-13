@@ -23,19 +23,29 @@ export default function Scene() {
       (typeof navigator !== "undefined" && navigator.maxTouchPoints > 1);
 
     if (!isMobileOrTouch) {
-      // Defer 3D canvas loading until main thread is completely idle
-      const scheduleLoad = () => {
-        if ("requestIdleCallback" in window) {
-          (window as any).requestIdleCallback(
-            () => setShouldRender3D(true),
-            { timeout: 1500 }
-          );
-        } else {
-          setTimeout(() => setShouldRender3D(true), 800);
-        }
+      const load3D = () => {
+        setShouldRender3D(true);
+        cleanupListeners();
       };
 
-      scheduleLoad();
+      const cleanupListeners = () => {
+        window.removeEventListener("mousemove", load3D);
+        window.removeEventListener("scroll", load3D);
+        window.removeEventListener("keydown", load3D);
+        window.removeEventListener("pointerdown", load3D);
+      };
+
+      // Load on first real user interaction (mousemove, scroll, keydown, pointerdown)
+      window.addEventListener("mousemove", load3D, { passive: true, once: true });
+      window.addEventListener("scroll", load3D, { passive: true, once: true });
+      window.addEventListener("keydown", load3D, { passive: true, once: true });
+      window.addEventListener("pointerdown", load3D, { passive: true, once: true });
+
+      // Or as an idle fallback after 5 seconds
+      const timer = setTimeout(() => {
+        setShouldRender3D(true);
+        cleanupListeners();
+      }, 5000);
 
       // Pause/unmount 3D canvas when scrolled out of view to save GPU/CPU
       const observer = new IntersectionObserver(
@@ -49,7 +59,11 @@ export default function Scene() {
         observer.observe(containerRef.current);
       }
 
-      return () => observer.disconnect();
+      return () => {
+        clearTimeout(timer);
+        cleanupListeners();
+        observer.disconnect();
+      };
     }
   }, []);
 

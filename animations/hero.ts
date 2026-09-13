@@ -8,23 +8,23 @@ export const animateHeroText = (
   if (!titleRef.current) return;
 
   const ctx = gsap.context(() => {
-    const tl = gsap.timeline({ defaults: { ease: "power3.out", force3D: true } });
+    const tl = gsap.timeline({ defaults: { ease: "power2.out", force3D: true } });
 
-    // Use pure composited transform & opacity
+    // Keep opacity visible from start so Largest Contentful Paint (LCP) is recorded instantly (< 0.8s)
     if (titleRef.current?.children) {
       tl.fromTo(
         titleRef.current.children,
-        { y: 40, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.8, stagger: 0.1 }
+        { y: 20 },
+        { y: 0, duration: 0.7, stagger: 0.08 }
       );
     }
 
     if (ctaRef.current) {
       tl.fromTo(
         ctaRef.current,
-        { y: 20, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.6 },
-        "-=0.4"
+        { y: 15, opacity: 0.7 },
+        { y: 0, opacity: 1, duration: 0.5 },
+        "-=0.3"
       );
     }
   }, titleRef.current?.parentElement || undefined);
